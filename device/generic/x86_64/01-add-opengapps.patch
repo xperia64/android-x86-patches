@@ -1,0 +1,14 @@
+diff --git a/android_x86_64.mk b/android_x86_64.mk
+index 6ae792d..f891106 100644
+--- a/android_x86_64.mk
++++ b/android_x86_64.mk
+@@ -22,3 +22,9 @@ PRODUCT_NAME := android_x86_64
+ PRODUCT_BRAND := Android-x86
+ PRODUCT_DEVICE := x86_64
+ PRODUCT_MODEL := Generic Android-x86_64
++
++GAPPS_VARIANT := nano
++GAPPS_PRODUCT_PACKAGES += Chrome
++GAPPS_EXCLUDED_PACKAGES := MarkupGoogle
++#GAPPS_EXCLUDED_PACKAGES += GoogleBackupTransport
++$(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)

@@ -1,0 +1,55 @@
+diff --git a/Android.mk b/Android.mk
+new file mode 100644
+index 0000000..049597d
+--- /dev/null
++++ b/Android.mk
+@@ -0,0 +1,21 @@
++#
++# Copyright (C) 2016 The Android-x86 Open Source Project
++#
++# Licensed under the GNU General Public License Version 2 or later.
++# You may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#      http://www.gnu.org/licenses/gpl.html
++#
++
++LOCAL_PATH := $(my-dir)
++
++SYMLINKS := $(subst $(LOCAL_PATH),$(TARGET_OUT)/lib/firmware,$(filter-out $(LOCAL_PATH)/.git/%,$(shell find $(LOCAL_PATH) -type l)))
++
++$(SYMLINKS): FW_PATH := $(LOCAL_PATH)
++$(SYMLINKS):
++	@link_to=`readlink $(subst $(TARGET_OUT)/lib/firmware,$(FW_PATH),$@)`; \
++	echo "Symlink: $@ -> $$link_to"; \
++	mkdir -p $(@D); ln -sf $$link_to $@
++
++ALL_DEFAULT_INSTALLED_MODULES += $(SYMLINKS)
+diff --git a/CleanSpec.mk b/CleanSpec.mk
+new file mode 100644
+index 0000000..ea87a03
+--- /dev/null
++++ b/CleanSpec.mk
+@@ -0,0 +1 @@
++$(call add-clean-step, rm -rf $(TARGET_OUT)/lib/firmware)
+diff --git a/firmware.mk b/firmware.mk
+new file mode 100644
+index 0000000..855e7a6
+--- /dev/null
++++ b/firmware.mk
+@@ -0,0 +1,15 @@
++#
++# Copyright (C) 2016 The Android-x86 Open Source Project
++#
++# Licensed under the GNU General Public License Version 2 or later.
++# You may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#      http://www.gnu.org/licenses/gpl.html
++#
++
++LOCAL_FIRMWARES_DIR ?= $(LOCAL_PATH)
++LOCAL_FIRMWARES ?= $(filter-out .git/% %.mk,$(subst ./,,$(shell cd $(LOCAL_FIRMWARES_DIR) && find . -type f)))
++
++PRODUCT_COPY_FILES := \
++    $(foreach f,$(LOCAL_FIRMWARES),$(LOCAL_FIRMWARES_DIR)/$(f):system/lib/firmware/$(f))

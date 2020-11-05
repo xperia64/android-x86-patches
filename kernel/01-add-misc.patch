@@ -1,0 +1,39 @@
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 2b2a841cd938..8d1950f1a5b0 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -1718,7 +1718,7 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
+ 	dev->interrupt_count = 0;
+ 
+ 	dev->net = net;
+-	strcpy (net->name, "usb%d");
++	strcpy (net->name, "eth%d");
+ 	memcpy (net->dev_addr, node_id, sizeof node_id);
+ 
+ 	/* rx and tx sides can use different message sizes;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 8e2b35ba93ad..731b075dc5fb 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3278,6 +3278,13 @@ static int shmem_xattr_handler_set(const struct xattr_handler *handler,
+ 	return simple_xattr_set(&info->xattrs, name, value, size, flags, NULL);
+ }
+ 
++static const struct xattr_handler shmem_user_xattr_handler = {
++	        .prefix = XATTR_USER_PREFIX,
++		        .get = shmem_xattr_handler_get,
++			        .set = shmem_xattr_handler_set,
++};
++
++
+ static const struct xattr_handler shmem_security_xattr_handler = {
+ 	.prefix = XATTR_SECURITY_PREFIX,
+ 	.get = shmem_xattr_handler_get,
+@@ -3295,6 +3302,7 @@ static const struct xattr_handler *shmem_xattr_handlers[] = {
+ 	&posix_acl_access_xattr_handler,
+ 	&posix_acl_default_xattr_handler,
+ #endif
++	&shmem_user_xattr_handler,
+ 	&shmem_security_xattr_handler,
+ 	&shmem_trusted_xattr_handler,
+ 	NULL
